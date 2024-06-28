@@ -14,7 +14,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-public class ConceptPage {
+public class ConceptPageTest {
 
     private WebDriver driver;
     private String baseUrl = "https://vivo-front-4a6f.vercel.app/";

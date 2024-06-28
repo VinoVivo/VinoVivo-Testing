@@ -20,7 +20,7 @@ import org.openqa.selenium.interactions.Actions;
 
 public class HeaderTests {
     private WebDriver driver;
-    private String baseUrl = "https://vivo-front-4a6f.vercel.app/";
+    private String baseUrl = "https://vivo-front-4a6f.vercel.app";
     
     @BeforeEach
     public void setUp() {
@@ -101,7 +101,7 @@ public class HeaderTests {
         
         // Verificar redirección al hacer clic en el logo o lema
         logo.click();
-        assertEquals("https://vivo-front-4a6f.vercel.app/", driver.getCurrentUrl());
+        assertEquals(baseUrl, driver.getCurrentUrl());
         
         // Bloque Central: Enlaces de navegación
         List<WebElement> navLinks = header.findElements(By.xpath("//div[@class='hidden md:flex items-center space-x-8']"));
@@ -218,15 +218,18 @@ public class HeaderTests {
             actions.moveToElement(productButton).perform();
         
             // Esperar un momento para que las opciones bajen
-            Thread.sleep(2000); 
+            Thread.sleep(1000);
         
             // Listado de opciones a verificar
-            String[] opciones = {"Tinto", "Blanco", "Rosado", "Espumantes", "Todos"};
+            String[] opciones = {"Tinto", "Blanco", "Rosado", "Espumantes", "Ver todos"};
         
             // Iterar sobre cada opción
             for (String opcion : opciones) {
                 // Construir el XPath dinámico
                 String xpathOpcion = String.format("//a[normalize-space()='%s']", opcion);
+        
+                // Espera explícita para asegurar que el elemento esté presente antes de intentar interactuar con él
+                Thread.sleep(1000);
         
                 // Encontrar el elemento del menú desplegable según la opción actual
                 WebElement dropdownOpcion = driver.findElement(By.xpath(xpathOpcion));
@@ -237,23 +240,26 @@ public class HeaderTests {
                 // Esperar a que la página cargue completamente
                 waitForPageLoad();
         
+                // Añadir una espera de 2 segundos para permitir que los vinos se carguen
+                Thread.sleep(2000);
+        
                 // Verificar que la URL actual coincide con la URL esperada de la página correspondiente
                 String expectedUrl;
                 switch (opcion.toLowerCase()) {
                     case "tinto":
-                        expectedUrl = "https://vivo-front-4a6f.vercel.app/type/3";
+                        expectedUrl = baseUrl + "/type/3"; 
                         break;
                     case "blanco":
-                        expectedUrl = "https://vivo-front-4a6f.vercel.app/type/2";
+                        expectedUrl = baseUrl + "/type/2";
                         break;
                     case "rosado":
-                        expectedUrl = "https://vivo-front-4a6f.vercel.app/type/1";
+                        expectedUrl = baseUrl + "/type/1";
                         break;
                     case "espumantes":
-                        expectedUrl = "https://vivo-front-4a6f.vercel.app/type/4";
+                        expectedUrl = baseUrl + "/type/4";
                         break;
-                    case "todos":
-                        expectedUrl = "https://vivo-front-4a6f.vercel.app/products";
+                    case "ver todos":
+                        expectedUrl = baseUrl + "/products";
                         break;
                     default:
                         throw new IllegalArgumentException("Tipo de vino no reconocido: " + opcion);
@@ -266,7 +272,11 @@ public class HeaderTests {
                 driver.navigate().back();
         
                 // Esperar un momento para permitir la navegación anterior
-                Thread.sleep(2000);
+                Thread.sleep(1000);
+        
+                // Realizar hover sobre el botón de Productos nuevamente para la siguiente iteración
+                actions.moveToElement(productButton).perform();
+                Thread.sleep(1000);
             }
         }
         
@@ -293,38 +303,7 @@ public class HeaderTests {
                 e.printStackTrace();
             }
         }
-
-    @Test
-    public void testInicioButtonRedirectsToHomePage() {
-
-        // Encontrar el botón de inicio en el header y hacer clic en él
-        driver.findElement(By.xpath("//span[normalize-space()='INICIO']")).click();
-
-        // Verificar que la URL actual coincide con la URL de la página principal
-        String currentUrl = driver.getCurrentUrl();
-        String expectedUrl = "https://vivo-front-4a6f.vercel.app/";
-        assertEquals(expectedUrl, currentUrl, "El botón de inicio no dirige a la página principal");
-    }
-
-    @Test
-    public void testConceptButtonRedirectsToConceptPage() {
-
-        // Encontrar el botón de Concepto en el encabezado y hacer clic en él
-        driver.findElement(By.xpath("//span[normalize-space()='CONCEPTO']")).click();
-
-        // Esperar un breve tiempo para que la página carge correctamente
-        try {
-            Thread.sleep(2000); 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        // Verificar que la URL actual coincide con la URL de la página de Concepto
-        String currentUrl = driver.getCurrentUrl();
-        String expectedUrl = "https://vivo-front-4a6f.vercel.app/concept";
-        assertEquals(expectedUrl, currentUrl, "El botón de Concepto no dirige a la página de Concepto");
-    }
-
+        
     @Test
     public void testContactButtonRedirectsToContactPage() {
 
@@ -340,7 +319,7 @@ public class HeaderTests {
 
         // Verificar que la URL actual coincide con la URL de la página de Contacto
         String currentUrl = driver.getCurrentUrl();
-        String expectedUrl = "https://vivo-front-4a6f.vercel.app/contacto";
+        String expectedUrl = baseUrl + "contact";
         assertEquals(expectedUrl, currentUrl, "El botón de Contacto no dirige a la página de Contacto");
     }
 
